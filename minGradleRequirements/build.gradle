@@ -1,0 +1,218 @@
+import java.text.*
+
+// return statement, ;semi-colon, ()parenthesis  -> are optional
+
+
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+ 
+
+System.out.println "Hello World now: " + sdf.format(new Date())
+
+
+void sayHelloWorld() {
+	println "Hello world!"
+}
+sayHelloWorld()
+	
+	
+	
+int doubleIt(int i) {	// Groovy is optionally typed. If no type declared, use 'def'
+	println(i)
+	i * 3
+	def y = i			// returns always only last statement
+}
+println doubleIt(2)
+
+
+
+// Strings
+def s1 = "a string"
+def s2 = 'a string'
+
+// Strings over multible lines
+def s3 = """ 	A
+	string
+	on
+	multiple
+	lines
+"""
+println s3
+
+
+
+
+// String interpolation
+def x = 4
+println "x is $x"
+
+def myCourse = "gradle"
+println "I'm training in: ${myCourse.toUpperCase()}"
+
+
+
+// Properties...
+class Person {                       
+
+    String name                      
+    Integer age
+    
+     Person(name, age) {          
+        this.name = name
+        this.age = age
+    }						// Groovy does not need getters and setters
+}
+
+def p = new Person("Fred", 35)
+println p.age
+p.age = 36
+println p.age
+
+
+
+
+// with a Map
+Map m = new HashMap()
+
+m.put("foo", "Fred")
+println m.get("foo")
+
+m.foo = "bill"
+m.bar = "Jane"
+m.baz = "Dave"
+
+println m.foo
+println m.bar
+println m.baz
+
+
+
+
+// Closures
+/* 
+A closure in Groovy is an open, anonymous, block of code that can take arguments,
+return a value and be assigned to a variable. A closure may reference variables
+declared in its surrounding scope.
+*/
+def echoIt = { parameter ->
+	println parameter
+}
+echoIt("Hello World!")	//	called like a normal method
+
+
+Closure echoIt2 = { parameter ->	//	with type Closure <Interface>
+	println parameter
+}
+
+
+def oneArgMethod(closure) {	//	pass closures as parameters
+	closure() * 2
+}
+println oneArgMethod {10}
+
+
+def twoArgMethod(factor, closure){	// closure is always the last parameter passed in
+	closure() * factor
+}
+println twoArgMethod(3, {10})
+
+
+def i = oneArgMethod {
+	def y = 3
+	y * 2
+}
+assert i == 12
+
+
+for (int j in [1,2,3]){		//	common uses for closure ... iterators!
+	println j
+}
+
+
+[1,2,3].each {
+	println it
+}
+
+
+
+// Closure resolution
+class Person1 {                       
+
+    String name = "Fred"                     
+    
+	Closure nameSayer = {
+		println name
+	}
+}
+def p1 = new Person1()
+p1.nameSayer()
+
+
+
+
+// Closed over a context
+def theName = "John"
+def sayName = {
+	println theName
+}
+sayName()
+theName = "Fred"
+sayName()
+
+
+
+class Person2 {                       
+
+    String theName                      
+    Integer theAge
+    
+     Person2(theName, theAge) {          
+        this.theName = theName
+        this.theAge = theAge
+    }
+
+	def executeInside(Closure c){
+		c.delegate = this			//	The delegate of a closure is an object that is used to resolve references
+		c()							//	that cannot be resolved within the body of the closure itself.
+	}
+}
+
+def p2 = new Person2("Fred", 35)
+println p2.theName
+p2.executeInside {println theName}
+
+
+/*
+
+def say = {
+  println m
+}
+say.delegate = [m:2]
+say()
+
+-> the delegate is used to resolve the reference, and in this case the delegate is a Map that maps m to 2.
+ 
+*/
+
+
+
+// *.gradle Files == Access to Objects
+// Core  Object Script
+logger.info "Hello!"	// logger is a property
+
+apply {		// takes a Closure
+	println "Hello again!!"
+}
+
+/* There are following Core Objects
+
+- Script <Interface>
+- Project <Interface>
+- Gradel <Interface>
+- Settings <Interface>
+- Task <Interface>
+- Action <Interface>
+
+- TaskExecutionGraph
+
+*/

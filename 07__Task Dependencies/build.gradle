@@ -1,0 +1,220 @@
+defaultTasks 'doFinished'
+// defaultTasks 'doFinished', 'doStartProcess', 'doStep2', 'doSomethingInTheMiddle'
+logger.info ">>> build.gradle --> This is executed during the configuration phase  - timestamp @ ${gradle.timestamp()}"
+
+
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+task doStep2{
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+task doSomethingInTheMiddle (dependsOn: 'doStartProcess') {				// static dependency
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished (dependsOn: ['doSomethingInTheMiddle', 'doStep2'])   {	// static dependency
+	doLast{
+		logger.info "$name - Done - OK!"
+	}	
+}
+
+
+/*
+
+defaultTasks 'doFinished'
+logger.info ">>> build.gradle --> This is executed during the configuration phase  - timestamp @ ${gradle.timestamp()}"
+
+
+
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+task doStep2{
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+task doSomethingInTheMiddle (dependsOn: ['doStartProcess',  tasks.findAll { task -> task.name.startsWith('doStep2')  }  ]) {
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished (dependsOn: ['doSomethingInTheMiddle', 'doStep2'])   {
+	doLast{
+		logger.info "$name - Done - OK!"
+	}	
+}
+
+
+logger.info ">>> ${ project.tasks.findAll { task -> task.name.startsWith('doStep2')  }  }"
+*/
+
+
+
+
+
+
+/*
+//Add to dependency to existing Task
+
+defaultTasks 'doFinished'
+logger.info ">>> build.gradle --> This is executed during the configuration phase  - timestamp @ ${gradle.timestamp()}"
+
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+task doStep2 {
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+task doSomethingInTheMiddle  {
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished (dependsOn: 'doSomethingInTheMiddle'){
+	doLast{
+		logger.info "$name - Done - OK!"
+	}	
+}
+
+
+logger.info "${ project.tasks.findAll { task -> task.name.startsWith('doStep2')} }"
+
+
+//Conditional dynamic logic
+if ( Math.random() < 0.5){
+	doSomethingInTheMiddle.dependsOn doStartProcess, tasks.findAll { task -> task.name.startsWith('doStep2') }
+}
+*/
+
+
+
+
+
+
+/*
+defaultTasks 'doFinished'
+//logger.info ">>> build.gradle --> This is executed during the configuration phase  - timestamp @ ${gradle.timestamp()}"
+
+
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+task doStep2{
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+task doSomethingInTheMiddle (dependsOn: ['doStartProcess',  tasks.findAll { task -> task.name.startsWith('doStep2')  }  ]) {
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished (dependsOn: ['doSomethingInTheMiddle', 'doStep2'])   {
+	doLast{
+		logger.info "$name - Done - OK!"
+	}	
+}
+
+// logger.info ">>> $project.gradle.taskGraph.allTasks"
+
+
+/*
+project.gradle.taskGraph.whenReady {
+	logger.info ">>> $project.gradle.taskGraph.allTasks"
+}
+*/
+
+
+
+
+
+
+/*
+defaultTasks 'doFinished'
+//logger.info ">>> build.gradle --> This is executed during the configuration phase  - timestamp @ ${gradle.timestamp()}"
+
+
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+task doStep2{
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+task doSomethingInTheMiddle (dependsOn: ['doStartProcess',  tasks.findAll { task -> task.name.startsWith('doStep2')  }  ]) {
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished {
+	doLast{
+		logger.info "$name - Done - OK! >>> with version=$version"
+	}	
+}
+
+
+
+//Conditional logic
+if ( Math.random() < 0.5){
+	doFinished.dependsOn doSomethingInTheMiddle, doStep2
+}
+
+project.gradle.taskGraph.whenReady {taskGraph ->
+    if (taskGraph.hasTask(doStep2)) {    	
+        project.version = '1.0'        
+    } else {    	
+        project.version = '1.0-SNAPSHOT'
+    }
+}
+
+ project.gradle.taskGraph.beforeTask{task ->
+  	logger.info "+++ Before task $task.name"
+ }
+ 
+ project.gradle.taskGraph.afterTask{task ->
+  	logger.info "+++ Finished task $task.name"
+ }
+*/
